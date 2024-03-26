@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 与源配置文件使用相同命名空间-->
+<mapper namespace="com.knowledgeplanet.forum.dao.MessageMapper">
+    <!-- 定义表连接查询返回的结果集映射，继承自源配置文件的映射结果集 -->
+    <resultMap id="AllInfoResultMap" type="com.knowledgeplanet.forum.model.Message" extends="BaseResultMap">
+        <!-- 扩展用户信息结果, 注意查询结果列名的前缀为 u_  -->
+        <association property="postUser" resultMap="com.knowledgeplanet.forum.dao.UserMapper.BaseResultMap" columnPrefix="u_"/>
+    </resultMap>
+
+    <!-- 按用户ID查询所有站内信 -->
+    <select id="selectByReceiveUserId" parameterType="java.lang.Long" resultMap="AllInfoResultMap">
+        SELECT
+        u.id AS u_id,
+        u.nickname AS u_nickname,
+        u.gender AS u_gender,
+        u.avatarUrl AS u_avatarUrl,
+        m.id,
+        m.postUserId,
+        m.receiveUserId,
+        m.content,
+        m.state,
+        m.createTime,
+        m.updateTime
+        FROM
+        t_message AS m,
+        t_user AS u
+        WHERE
+        m.postUserId = u.id AND
+        m.deleteState = 0 AND
+        m.receiveUserId = #{receiveUserId,jdbcType=BIGINT}
+        order by m.createTime DESC
+    </select>
+
+    <!-- 查询用户的未读站内信数量 -->
+    <select id="selectUnreadCount" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        select COUNT(*) from t_message
+        WHERE state = 0
+        and deleteState = 0
+        and receiveUserId = #{receiveUserId,jdbcType=BIGINT}
+    </select>
+</mapper>

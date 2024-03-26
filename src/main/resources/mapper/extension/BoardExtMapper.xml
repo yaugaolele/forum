@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 扩展的Mapper配置文件，注意命名空间与源配置文件保持一致 -->
+<mapper namespace="com.knowledgeplanet.forum.dao.BoardMapper">
+    <!-- 查询前N个正常状态的版块 -->
+    <select id="selectTopByNum" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_board
+        where
+        deleteState = 0
+        and
+        state = 0
+        order by sort asc
+        limit #{num,jdbcType=INTEGER}
+    </select>
+
+    <!-- 查询所有正常状态的版块 -->
+    <select id="selectAllNormal" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_board
+        where
+        deleteState = 0
+        and
+        state = 0
+        order by sort asc
+    </select>
+
+    <!-- 用户发帖数加1 -->
+    <update id="updateArticleCountById" parameterType="java.lang.Long">
+        UPDATE t_board SET articleCount = articleCount + 1 WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+
+</mapper>

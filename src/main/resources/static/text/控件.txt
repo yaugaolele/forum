@@ -1,0 +1,8 @@
+帖子列表可选 Lists  Activity
+导航 page header
+发贴按钮 job-listing.html
+提示 Toasts bootstrap
+个人中心，发贴按钮，page-header.html
+
+分两边显示
+justify-content-between

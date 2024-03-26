@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.knowledgeplanet.forum.dao.ArticleReplyMapper">
+    <!-- 定义表连接查询返回的结果集映射，继承自源配置文件的映射结果集 -->
+    <resultMap id="AllInfoResultMap" type="com.knowledgeplanet.forum.model.ArticleReply" extends="BaseResultMap">
+        <!-- 扩展用户信息结果, 注意查询结果列名的前缀为 u_  -->
+        <association property="user" resultMap="com.knowledgeplanet.forum.dao.UserMapper.BaseResultMap" columnPrefix="u_"/>
+    </resultMap>
+
+    <!-- 根据帖子编号查询所有回复 -->
+    <select id="selectByArticleId" parameterType="java.lang.Long" resultMap="AllInfoResultMap">
+        SELECT
+        u.id AS u_id,
+        u.nickname AS u_nickname,
+        u.gender AS u_gender,
+        u.avatarUrl AS u_avatarUrl,
+        a.id,
+        a.articleId,
+        a.postUserId,
+        a.replyId,
+        a.replyUserId,
+        a.content,
+        a.likeCount,
+        a.state,
+        a.deleteState,
+        a.createTime,
+        a.updateTime
+        FROM
+        t_article_reply AS a,
+        t_user AS u
+        WHERE
+        a.articleId = #{articleId,jdbcType=BIGINT}
+        AND a.postUserId = u.id
+        AND a.state = 0
+        AND a.deleteState = 0
+        ORDER BY a.createTime DESC
+    </select>
+</mapper>
